@@ -399,4 +399,4 @@ FodyWeavers.xsd
 *.project
 *.library_mapping.xml
 
-.setings/
+.settings/
