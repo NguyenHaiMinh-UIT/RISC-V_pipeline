@@ -1,4 +1,4 @@
-module Ex_register (
+module EX_register (
     input clk,rst_n,
     input FlushE,
     input StallE,
