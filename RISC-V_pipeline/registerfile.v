@@ -8,7 +8,6 @@ module registerfile #(
     ,   input   [4:0]   rd  //register destination
     ,   input   [31:0]  Din  // Data in to wite
     ,   input   WE
-
     ,   output  [31:0]  RD1
     ,   output  [31:0]  RD2
 );
