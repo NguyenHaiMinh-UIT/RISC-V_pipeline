@@ -3,7 +3,6 @@ module dmem #(
 ) (
     input clk,
     input [31:0] wa,
-    input [31:0] ra,
     input [31:0] wd,
     input we,
     output [31:0] rd
@@ -14,5 +13,5 @@ module dmem #(
             dmem[wa] <= wd ; 
         end
     end
-    assign rd = dmem[ra];
+    assign rd = dmem[wa];
 endmodule

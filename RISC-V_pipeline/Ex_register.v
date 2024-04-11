@@ -4,11 +4,11 @@ module EX_register (
     input StallE,
     input write_enable_RF_D,
     input write_enable_dmem_D,
-    input write_back_D,
+    input [1:0] write_back_D,
     input [10:0] alu_ctrl_D, // alu promax neen phai chinh lai
-    input [31:0] alu_srcA_D,
-    input [31:0] alu_srcB_D,
-    input jump_D,
+    input alu_srcA_D,
+    input alu_srcB_D,
+    input [1:0] jump_D,
     input branch_D,
     input takenD,
     input [31:0] pc_D,
@@ -19,14 +19,17 @@ module EX_register (
     input [4:0]  rs1_D,
     input [4:0]  rs2_D,
     input [4:0]  rd_D,
+    input [1:0]  store_sel_D,
+    input [2:0]  load_sel_D,
+    input [2:0]  Bropcode_D,
 
     output reg  write_enable_RF_E,
     output reg  write_enable_dmem_E,
-    output reg  write_back_E, 
+    output reg  [1:0] write_back_E, 
     output reg  [10:0] alu_ctrl_E,
-    output reg  [31:0] alu_srcA_E,
-    output reg  [31:0] alu_srcB_E,
-    output reg  jump_E,
+    output reg  alu_srcA_E,
+    output reg  alu_srcB_E,
+    output reg  [1:0] jump_E,
     output reg  branch_E,
     output reg  takenE,
     output reg  [31:0] pc_E,
@@ -36,7 +39,10 @@ module EX_register (
     output reg  [4:0] RD2_E,
     output reg  [4:0] rs1_E,
     output reg  [4:0] rs2_E,
-    output reg  [4:0] rd_E
+    output reg  [4:0] rd_E,
+    output reg  [1:0] store_sel_E,
+    output reg  [2:0] load_sel_E,
+    output reg  [2:0] Bropcode_E
 
 );
     always @(posedge clk) begin
@@ -57,7 +63,10 @@ module EX_register (
             RD2_E <= 0;
             rs1_E <= 0;
             rs2_E <= 0;
-            rd_E <= 0;         
+            rd_E <= 0;     
+            store_sel_E <= 0;
+            load_sel_E <= 0;
+            Bropcode_E <= 0;    
         end
         else if (FlushE) begin
             write_enable_RF_E <= 0;
@@ -76,7 +85,10 @@ module EX_register (
             RD2_E <= 5'b0;
             rs1_E <= 5'b0;
             rs2_E <= 5'b0;
-            rd_E  <= 5'b0;         
+            rd_E  <= 5'b0;  
+            store_sel_E <= 2'b0;
+            load_sel_E <= 3'b0;
+            Bropcode_E <= 2'b0;           
         end
         else if (StallE) begin
             write_enable_RF_E <= write_enable_RF_E;
@@ -96,6 +108,9 @@ module EX_register (
             rs1_E <= rs1_E;
             rs2_E <= rs2_E;
             rd_E  <= rd_E;   
+            store_sel_E <= store_sel_E;
+            load_sel_E <= load_sel_E;
+            Bropcode_E <= Bropcode_E;    
         end
         else begin
             write_enable_RF_E <= write_enable_RF_D;
@@ -115,6 +130,9 @@ module EX_register (
             rs1_E <= rs1_D;
             rs2_E <= rs2_D;
             rd_E  <= rd_D;   
+            store_sel_E <= store_sel_D;
+            load_sel_E <= load_sel_D;
+            Bropcode_E <= Bropcode_D;
         end
     end
 endmodule

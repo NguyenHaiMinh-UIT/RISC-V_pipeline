@@ -1,23 +1,23 @@
 module branchcomp (
-    input [6:0] Bropcode,
+    input [2:0] Bropcode,
     input [31:0] A,B,
     output branch
 );
-    parameter beq = 3'b000 ;
-    parameter bne = 3'b001 ;
-    parameter blt = 3'b100 ;
-    parameter bge = 3'b101 ;
-    parameter bltu = 3'b110 ;
-    parameter bgeu = 3'b111 ;
+    localparam beq = 3'b000 ;
+    localparam bne = 3'b001 ;
+    localparam blt = 3'b100 ;
+    localparam bge = 3'b101 ;
+    localparam bltu = 3'b110 ;
+    localparam bgeu = 3'b111 ;
 
     always @(*) begin
-        case (branch)
+        case (Bropcode)
             beq:    branch = (A==B) ;
             bne:    branch = (A!=B);
             blt:    branch = A < B ? 1 : 0;
             bge:    branch = A > B ? 1 : 0;
-            bltu:   branch = ($signed (A) < $signed (B) );
-            bgeu:   branch = ($signed(A) > $signed(B));
+            bltu:   branch = ($unsigned (A) < $unsigned (B) );
+            bgeu:   branch = ($unsigned(A) > $unsigned(B));
             default: branch = 0;
         endcase
     end

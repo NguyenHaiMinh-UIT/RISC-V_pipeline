@@ -8,8 +8,10 @@ module branch_prediction #(
     input branch, // = T
     input [31:0] pc_F,
     input [31:0] pc_E,
+    input [31:0] pc_D,
     input [31:0] pc_target,
     input [31:0] pc4,
+    input [31:0] pc4_E,
     output [31:0] pc_next,
     output [31:0] pc_restore,
     output flush,
@@ -25,8 +27,8 @@ module branch_prediction #(
         .rst_n(rst_n),
         .jump_E(jump_E),
         .branch_E(branch_E),
-        .pc_F(pc_F),
-        .pc_E(pc_E),
+        .pc_F(pc_F[21:2]),
+        .pc_E(pc_E[21:2]),
         .pc_target(pc_target),
         .pc_out(target_addr),
         .hit(hit)
@@ -38,9 +40,9 @@ module branch_prediction #(
         .rst_n(rst_n),
         .branch_E(branch_E),
         .jump_E(jump_E),
-        .take(),
-        .pc_F(pc_F),
-        .pc_E(pc_E),
+        .take(branch),
+        .pc_F(pc_F[11:2]),
+        .pc_E(pc_E[11:2]),
         .predict(taken)
     );
     assign mux_wire = hit & taken[1];
@@ -51,5 +53,6 @@ module branch_prediction #(
         .S(pc_next)
     );
     assign taken_F = mux_wire;
-    // assign {pc_restore,flush} 
+    assign {pc_restore,flush} = branch_E ? ((taken_E != branch) ? (branch ? {pc_target,1'b1} : {pc4_E,1'b1}) : {32'b0,1'b0} ) :
+                                jump_E ? ((pc_D != pc_target) ? {pc_target, 1'b1}:{32'b0,1'b0}) : {32'b0,1'b0};
 endmodule

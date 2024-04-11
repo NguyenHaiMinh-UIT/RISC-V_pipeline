@@ -3,29 +3,32 @@ module PHT #(parameter SIZE = 1024)(
     input branch_E,
     input jump_E,
     input take,
-    input [19:0] pc_F,
-    input [19:0] pc_E,
+    input [9:0] pc_F,
+    input [9:0] pc_E,
     output[1:0] predict
 );
     wire [1:0] fsm_state ;
-    reg [21:0] buffer [0:SIZE-1];
-    reg valid [0:SIZE - 1];
-    assign fsm_state = {(buffer[pc_E[9:0]][20]&buffer[pc_E[9:0]][21] | take&(buffer[pc_E[9:0]][20]|buffer[pc_E[9:0]][21])), take};
+    wire [9:0] addr_shared;
+    reg [1:0] buffer [0:SIZE-1];
+    reg [9:0] GHR;
+    assign addr_shared = GHR ^ pc_F ;
+    assign fsm_state = {(buffer[pc_E] & buffer[pc_E] | take & (buffer[pc_E] | buffer[pc_E])), take};
     integer i;
     always @(posedge clk) begin
         if (!rst_n) begin
             for (i=0; i< SIZE;i=i+1) begin
-                valid[i] <= 0;
+                buffer[i] <= 0;
             end
+            GHR <= 10'b0;
         end
         else if (branch_E) begin
-            buffer[pc_E[9:0]] <= {pc_E, fsm_state} ; 
-            valid[pc_E[9:0]] <= 1;
+            GHR <= {GHR[8:0], take};
+            buffer[pc_E] <= fsm_state ; 
         end
         else if (jump_E) begin
-            buffer[pc_E[9:0]] <= {pc_E, 2'b11};
-            valid[pc_E[9:0]] <= 1;
+            GHR <= {GHR[8:0], 1'b1};
+            buffer[pc_E] <= 2'b11;
         end
-        assign predict = (valid[pc_F[9:0]] == 1 &&  buffer[pc_F[9:0]][21:2] == pc_F) ?  buffer[pc_F[9:0]][1:0] : 2'b00;
     end
+    assign predict = buffer[addr_shared] ;
 endmodule
