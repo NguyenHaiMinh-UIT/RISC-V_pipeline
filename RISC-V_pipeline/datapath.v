@@ -1,31 +1,36 @@
 module datapath (
     input clk, rst_n,
-    input start,enable_inst_in, alu_srcA_D, alu_srcB_D, regWrite_D, memWrite_D, write_back_D,
+    input start,enable_inst_in, alu_srcA_D, alu_srcB_D, regWrite_D, memWrite_D, 
     input  branch_D, 
-    input [1:0] STORE_SEL_D, jump_D,
+    input [1:0] STORE_SEL_D, write_back_D,jump_D,
     input [2:0] LOAD_SEL_D, BROPCODE_D, immD,
     input [31:0] INSTRUCTION,ADDRESS,
     input [9:0] alu_ctrl_D,
-    output [6:0] opcode,
-    output [2:0] funct3,
-    output [6:0] funct7
+    output  [6:0] opcode,
+    output  [2:0] funct3,
+    output  [6:0] funct7,
+    output [31:0] ALU_RESULT
 );
-    wire [31:0] PC,PC4, PC_RESTORE, PC_NEXT, INSTR_F, INSTR_D, PC_F, PC4_F, PC_D, PC4_D;
-    wire [31:0] PC_TARGET, PC_E, PC4_E, PC4_M, PC4_W, PC_PC;
-    wire [4:0] RD1_D, RD2_D, RD1_E, RD2_E, RS1_E, RS2_E, RD_E, RD_M, RD_W ;
-    wire [31:0] w1_mux, w2_mux, w3_mux, w4_mux, w5_mux, w6_mux, w7_mux,             Din, Dout;
+    wire [31:0] PC_RESTORE, PC_NEXT, INSTR_F, INSTR_D, PC_F, PC4_F, PC_D, PC4_D;
+    wire [31:0] PC_TARGET, PC_E, PC4_E, PC4_M, PC4_W;
+    wire [4:0]   RS1_E, RS2_E, RD_E, RD_M, RD_W ;
+    wire [31:0] w1_mux, w2_mux, w3_mux, w4_mux, w5_mux, w6_mux, w7_mux,jalr_target, Din, Dout;
     wire [31:0] ALU_RSL_E, ALU_RSL_M, WB_DATA , IMM_EXTENDED_D, IMM_EXTENDED_E, IMM_EXTENDED_M;
-    wire forwardAE, forwardBE, branch, branch_E,  ALU_SRCA_E, ALU_SRCB_E;
+    wire branch, branch_E,  ALU_SRCA_E, ALU_SRCB_E;
     wire regWrite_E, regWrite_M, regWrite_W, memWrite_E, memWrite_M;
     wire [1:0]  write_back_E, write_back_M, write_back_W, jump_E;
     wire flush, stallF, stallD,  flush_E, taken_F, taken_D, taken_E,FLUSH_E, jump ;
-    wire [2:0] STORE_SEL_E, STORE_SEL_M, LOAD_SEL_E, LOAD_SEL_M, BROPCODE_E;
+    wire [2:0]  LOAD_SEL_E, LOAD_SEL_M, BROPCODE_E;
     wire [9:0] ALU_CTRL_E;
+    wire [31:0] RD1_D, RD2_D, RD1_E, RD2_E;
+    wire [1:0] STORE_SEL_E, STORE_SEL_M;
+    wire [1:0] forwardAE, forwardBE;
     assign FLUSH_E = flush | flush_E;
     assign opcode = INSTR_D[6:0];
     assign funct3 = INSTR_D[14:12];
     assign funct7 = INSTR_D[31:25];
     assign jump = jump_E[1] | jump_E[0] ;
+    assign ALU_RESULT = ALU_RSL_E;
     branch_prediction #(
         .SIZE(1024)
     ) branch_prediction_instance(
@@ -35,11 +40,11 @@ module datapath (
         .branch_E(branch_E),
         .taken_E(taken_E),
         .branch(branch),
-        .pc_F(PC),
+        .pc_F(PC_F),
         .pc_E(PC_E),
         .pc_D(PC_D),
         .pc_target(PC_TARGET),
-        .pc4(PC4),
+        .pc4(PC4_F),
         .pc4_E(PC4_E),
         .pc_next(PC_NEXT),
         .pc_restore(PC_RESTORE),
@@ -51,18 +56,15 @@ module datapath (
         .rst_n(rst_n),
         .stallF(stallF),
         .flushF(flush),
+        .start(start),
         .pc_restore(PC_RESTORE),
         .pc_next(PC_NEXT),
-        .pc_out(PC)
+        .pc_out(PC_F)
     );
-    mux2to1 mux2to1_instance(
-        .A(ADDRESS),
-        .B(PC),
-        .sel(enable_inst_in),
-        .S(PC_PC)
-    );
+
     instruction_Mem instruction_Mem_instance(
-        .address(PC_PC),
+        .address(PC_F),
+        .address1(ADDRESS),
         .clk(clk),
         // .we(we),
         .instr_in(INSTRUCTION),
@@ -70,15 +72,15 @@ module datapath (
         .start(start)
     );
     add add_PC_4(
-        .A(PC),
+        .A(PC_F),
         .B(32'd4),
-        .S(PC4)
+        .S(PC4_F)
     );
 
     ID_register ID_register_instance(
         .clk(clk),
         .rst_n(rst_n),
-        .stallD(stallD),
+        .stallD(stallD ),
         .flushD(flush),
         .instr_F(INSTR_F),
         .takenF(taken_F),
@@ -115,7 +117,7 @@ module datapath (
         .clk(clk),
         .rst_n(rst_n),
         .FlushE(FLUSH_E),
-        .StallE(),
+        .StallE(1'b0),
         .write_enable_RF_D(regWrite_D),
         .write_enable_dmem_D(memWrite_D),
         .write_back_D(write_back_D),
@@ -157,12 +159,8 @@ module datapath (
         .load_sel_E(LOAD_SEL_E),
         .Bropcode_E(BROPCODE_E)
     );
-///-----------------------------------------
-    add PC_ADD (
-        .A(PC_E),
-        .B(IMM_EXTENDED_E),
-        .S(PC_TARGET)
-    );
+///-----------------------------------------    
+
     mux3to1 mux3to1_RD1_instance(
         .in0(RD1_E),
         .in1(WB_DATA),
@@ -178,7 +176,7 @@ module datapath (
         .out(w2_mux)
     );
     mux2to1 mux2to1_A_instance(
-        .A(w2_mux),
+        .A(w1_mux),
         .B(PC_E),
         .sel(ALU_SRCA_E),
         .S(w3_mux)
@@ -197,18 +195,24 @@ module datapath (
         .alu_result(ALU_RSL_E),
         .branch(branch)
     );
-    // branchcomp branchcomp_instance(
-    //     .Bropcode(BROPCODE_E),
-    //     .A(w3_mux),
-    //     .B(w4_mux),
-    //     .branch(branch)
-    // );
+    mux2to1 jalr_handle(
+        .A(PC_E),
+        .B(w1_mux),
+        .sel(jump_E[1]),
+        .S(jalr_target)
+    );
+    add PC_ADD (
+        .A(jalr_target),
+        .B(IMM_EXTENDED_E),
+        .S(PC_TARGET)
+    );
+
 ////----------------------------------------
     harzard_unit harzard_unit_instance(
-        .write_enable_MF_M(regWrite_M),
-        .write_back_M(write_back_M),
-        .write_enable_MF_W(regWrite_W),
-        .write_back_W(write_back_W),
+        .write_enable_RF_M(regWrite_M),
+        // .write_back_M(write_back_M),
+        .write_enable_RF_W(regWrite_W),
+        // .write_back_W(write_back_W),
         .write_back_E(write_back_E),
         .rd_M(RD_M),
         .rd_W(RD_M),

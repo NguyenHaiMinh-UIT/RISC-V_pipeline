@@ -46,7 +46,7 @@ module controller (
            R_type : begin
             jump_D = 0;
             branch_D = 0;
-            imm_sel = 3'bx;
+            imm_sel = 3'b010;
             // bropcode = 3'bx;
             store_sel_D = 2'b11;
             load_sel_D  = 3'b111;
@@ -84,7 +84,7 @@ module controller (
             alu_srcB_D = 0;
             regWrite_D = 0;
             memWrite_D = 0;
-            write_back_D = 2'bxx;
+            write_back_D = 2'b01;
            end
            S_type : begin
             jump_D = 0 ;
@@ -101,7 +101,7 @@ module controller (
             alu_srcB_D = 1;
             regWrite_D = 0;
             memWrite_D = 1;
-            write_back_D = 2'bxx;
+            write_back_D = 2'b01;
            end
            I_load_type : begin
             jump_D = 0;
@@ -127,8 +127,8 @@ module controller (
             imm_sel = 3'b011;
             store_sel_D = 2'b11;
             load_sel_D = 3'b111;
-            alu_scrA_D = 1'bx;
-            alu_srcB_D = 1'bx;
+            alu_scrA_D = 1'b0;
+            alu_srcB_D = 1'b0;
             regWrite_D = 1;
             memWrite_D = 0;
             write_back_D = 2'b11;
@@ -151,8 +151,8 @@ module controller (
             imm_sel = 3'b000;
             store_sel_D = 2'b11;
             load_sel_D = 3'b111;
-            alu_scrA_D = 1'bx;
-            alu_srcB_D = 1'bx;
+            alu_scrA_D = 1'b0;
+            alu_srcB_D = 1'b0;
             regWrite_D = 1;
             memWrite_D = 0;
             write_back_D = 2'b10;
@@ -169,10 +169,22 @@ module controller (
             memWrite_D = 0;
             write_back_D = 2'b10;
            end  
-            default: jump_D = 0;
+            default: begin
+            jump_D = 0;
+            branch_D = 0;
+            imm_sel = 3'bx;
+            // bropcode = 3'bx;
+            store_sel_D = 2'b11;
+            load_sel_D  = 3'b111;
+            alu_scrA_D = 0;
+            alu_srcB_D = 0;
+            regWrite_D = 0;
+            memWrite_D = 0;
+            write_back_D = 2'b00;
+            end
         endcase
     end
-    always @(*) begin
+    always @(*) begin // bropcode
         if (opcode == 7'd99) begin
             case (funct3)
                 3'b000 : bropcode = 3'b000; 
@@ -181,9 +193,10 @@ module controller (
                 3'b101 : bropcode = 3'b101;
                 3'b110 : bropcode = 3'b110;
                 3'b111 : bropcode = 3'b111;
-                default: bropcode = 3'b000;
+                default: bropcode = 3'b010;
             endcase
         end
+        else bropcode = 3'b010;
     end
     always @(*) begin
         casex ({opcode,funct3, funct7}) 

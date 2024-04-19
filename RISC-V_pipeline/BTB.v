@@ -13,7 +13,7 @@ module BTB #(parameter SIZE = 1024)(
     integer  i;
     always @(posedge clk) begin
         if (!rst_n) begin
-            for (i=0; i< SIZE -1;i=i+1) begin
+            for (i=0; i< SIZE ;i=i+1) begin
                 valid[i] <= 0;
             end
         end
@@ -22,6 +22,6 @@ module BTB #(parameter SIZE = 1024)(
             valid[pc_E[9:0]] <= 1'b1;
         end
     end
-    assign hit = (valid[pc_F[9:0]] == 1 &&  buffer[pc_F[9:0]][51:32] == pc_F);
-    assign pc_out = hit ? buffer[pc_F[9:0]][31:0] : 32'b0;
+    assign hit = (valid[pc_F[9:0]] && (buffer[pc_F[9:0]][51:32] == pc_F)) ? 1'b1 : 1'b0;
+    assign pc_out = buffer[pc_F[9:0]][31:0];
 endmodule

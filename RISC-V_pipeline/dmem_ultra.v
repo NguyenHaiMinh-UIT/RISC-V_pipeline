@@ -13,21 +13,21 @@ module dmem_ultra (
                                     localparam LBU = 3'b100;
     reg [31:0] mem_WD_store;
     wire [31:0] mem_RD_load;
-    //STORE
+    // STORE
     always @(*) begin
         if (store == SB)    mem_WD_store = {{24{mem_WD[7]}}, mem_WD[7:0]};
         else if (store == SH)   mem_WD_store = {{16{mem_WD[15]}}, mem_WD[15:0]};
         else mem_WD_store = mem_WD;
     end
-    
+
     dmem #(
         .address(32)
     ) dmem_instance(
         .clk(clk),
         .wa(mem_WA),
-        .wd(mem_WD),
+        .wd(mem_WD_store),
         .we(write_enable_dmem),
-        .rd(mem_RD)
+        .rd(mem_RD_load)
     );
     //LOAD
     always @(*) begin

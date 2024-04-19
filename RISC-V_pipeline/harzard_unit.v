@@ -1,9 +1,9 @@
 module harzard_unit (
-    input write_enable_MF_M,
-    input write_back_M,
-    input write_enable_MF_W,
-    input write_back_W,
-    input write_back_E,
+    input write_enable_RF_M,
+    // input [1:0] write_back_M,
+    input write_enable_RF_W,
+    // input [1:0] write_back_W,
+    input [1:0] write_back_E,
     input [4:0] rd_M,
     input [4:0] rd_W,
     input [4:0] rs1_D,
@@ -20,20 +20,20 @@ module harzard_unit (
     wire hazard;
 // forward AE
     always @(*) begin
-        if (write_back_M && (rd_M == rs1_E)) begin
+        if (write_enable_RF_M && (rd_M == rs1_E)) begin
             forwardAE <= 2'b10;
         end
-        else if (write_back_W && (rd_W == rs1_E)) begin
+        else if (write_enable_RF_W && (rd_W == rs1_E)) begin
             forwardAE <= 2'b01;
         end
         else forwardAE <= 2'b00;
     end
 // forward BE
     always @(*) begin
-        if (write_back_M && (rd_M == rs2_E)) begin
+        if (write_enable_RF_M && (rd_M == rs2_E)) begin
             forwardBE <= 2'b10;
         end
-        else if (write_back_W && (rd_W == rs2_E)) begin
+        else if (write_enable_RF_W && (rd_W == rs2_E)) begin
             forwardBE <= 2'b01;
         end
         else forwardBE <= 2'b00;

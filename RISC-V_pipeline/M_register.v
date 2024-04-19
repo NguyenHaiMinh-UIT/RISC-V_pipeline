@@ -28,6 +28,7 @@ module M_register (
             write_enable_dmem_M <= 0;
             write_back_M <= 0;
             alu_rsl_M <= 0;
+            imm_extended_M <= 0;
             wd_M <= 0;
             rd_M <= 0;
             pc4_M <= 0; 
@@ -39,6 +40,7 @@ module M_register (
             write_enable_dmem_M <= write_enable_dmem_E;
             write_back_M <= write_back_E;
             alu_rsl_M <= alu_rsl_E;
+            imm_extended_M <= imm_extended_E;
             wd_M <= wd_E;
             rd_M <= rd_E;
             pc4_M <= pc4_E;

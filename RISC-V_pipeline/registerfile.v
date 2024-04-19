@@ -14,10 +14,10 @@ module registerfile #(
     reg [width-1:0] mem [0:(depth-1)] ;
     integer i;
     //read
-    assign RD1 = mem[rs1];
-    assign RD2 = mem[rs2];
-    always @(posedge clk or negedge rst_n) begin
-    // reset 
+    assign RD1 = (rs1 && rs1 == rd) ? Din : mem[rs1]; 
+    assign RD2 = (rs2 && rs2 == rd) ? Din : mem[rs2];
+    always @(posedge clk) begin
+     // reset 
         if (~rst_n) begin
             for (i = 0 ; i < depth; i=i+1)begin
                 mem[i] <= 32'b0;
@@ -25,10 +25,8 @@ module registerfile #(
         end
     //write
         else begin
-            if (WE && (rd!=0) )
+            if (WE && (rd) )
                 mem[rd] <= Din;
         end
-    end
-
-    
+    end   
 endmodule

@@ -10,7 +10,7 @@ module ID_register (
     output reg [31:0] instr_D,
     output reg [31:0] pc4_D,
     output reg [31:0] pc_D,
-    output takenD
+    output reg takenD
 );
   always @(posedge clk) begin
     if (!rst_n) begin
@@ -33,7 +33,7 @@ module ID_register (
     end
     else begin
         instr_D <= instr_F;
-        pc4_F <= pc4_F;
+        pc4_D <= pc4_F;
         pc_D <= pc_F;
         takenD <= takenF;
     end
