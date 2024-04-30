@@ -1,15 +1,19 @@
 module datapath (
     input clk, rst_n,
-    input start,enable_inst_in, alu_srcA_D, alu_srcB_D, regWrite_D, memWrite_D, 
+    input start, alu_srcA_D, alu_srcB_D, regWrite_D, memWrite_D, 
     input  branch_D, 
     input [1:0] STORE_SEL_D, write_back_D,jump_D,
     input [2:0] LOAD_SEL_D, BROPCODE_D, immD,
     input [31:0] INSTRUCTION,ADDRESS,
     input [9:0] alu_ctrl_D,
+    input [4:0] ra,
+    input [31:0] mem_RA,
     output  [6:0] opcode,
     output  [2:0] funct3,
     output  [6:0] funct7,
-    output [31:0] ALU_RESULT
+    output [31:0] ALU_RESULT,
+    output [31:0] RegData, MemData,
+    output [31:0] Datapath_Check_Done
 );
     wire [31:0] PC_RESTORE, PC_NEXT, INSTR_F, INSTR_D, PC_F, PC4_F, PC_D, PC4_D;
     wire [31:0] PC_TARGET, PC_E, PC4_E, PC4_M, PC4_W;
@@ -80,7 +84,8 @@ module datapath (
     ID_register ID_register_instance(
         .clk(clk),
         .rst_n(rst_n),
-        .stallD(stallD ),
+        .start(start),
+        .stallD(stallD),
         .flushD(flush),
         .instr_F(INSTR_F),
         .takenF(taken_F),
@@ -101,12 +106,14 @@ module datapath (
         .rs1(INSTR_D[19:15]),
         .rs2(INSTR_D[24:20]),
         .rd(RD_W),
+        .ra(ra),
         .Din(WB_DATA),
         .WE(regWrite_W),
         .RD1(RD1_D),
-        .RD2(RD2_D)
+        .RD2(RD2_D),
+        .RegData(RegData)
     );
-
+    
     signExtend signExtend_instance(
         .instr_D(INSTR_D[31:7]),
         .immD(immD),
@@ -215,7 +222,7 @@ module datapath (
         // .write_back_W(write_back_W),
         .write_back_E(write_back_E),
         .rd_M(RD_M),
-        .rd_W(RD_M),
+        .rd_W(RD_W),
         .rs1_D(INSTR_D[19:15]),
         .rs2_D(INSTR_D[24:20]),
         .rs1_E(RS1_E),
@@ -258,7 +265,10 @@ module datapath (
         .load(LOAD_SEL_M),
         .mem_WA(ALU_RSL_M),
         .mem_WD(Din),
-        .mem_RD(Dout)
+        .mem_RA(mem_RA),
+        .mem_RD(Dout),
+        .DMEM_Check_Done(Datapath_Check_Done),
+        .MemData(MemData)
     );
     WB_register WB_register_instance(
         .clk(clk),

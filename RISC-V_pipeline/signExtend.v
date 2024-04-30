@@ -15,7 +15,7 @@ module signExtend (
             B_Imm : imm_out_D = {{20{instr_D[31]}}, instr_D[7], instr_D[30:25], instr_D[11:8],1'b0};
             U_Imm : imm_out_D = {{instr_D[31:12]},12'b0};
             J_Imm : imm_out_D = {{12{instr_D[31]}}, instr_D[19:12],instr_D[20], instr_D[30:21],1'b0};
-            3'b101: imm_out_D = {27'b0, instr_D[24:20]};
+            3'b101: imm_out_D = {27'b0, instr_D[24:20]}; // auipc
             default: imm_out_D = 32'b0;
         endcase
     end

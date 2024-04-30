@@ -11,7 +11,7 @@ module alu (
     wire [31:0] w1 = (alu_ctrl[1]) ? A - B : 0 ;        // SUB
     wire [31:0] w2 = (alu_ctrl[2]) ? A << B[4:0] : 0 ;  // SLL
     wire [31:0] w3 = (alu_ctrl[3]) ? ((A) < (B)) : 0 ;        // SLT
-    wire [31:0] w4 = (alu_ctrl[4]) ? ($unsigned(A) < $unsigned(B)) : 0 ;// SLTU
+    wire [31:0] w4 = (alu_ctrl[4]) ? A < B : 0 ;// SLTU
     wire [31:0] w5 = (alu_ctrl[5]) ? A ^ B : 0 ;        // XOR
     wire [31:0] w6 = (alu_ctrl[6]) ? A >> B[4:0] : 0 ;       // SRL
     wire [31:0] w7 = (alu_ctrl[7]) ? $signed(A) >>> B[4:0] : 0 ;// SRA
@@ -31,10 +31,10 @@ module alu (
         case (Bropcode)
             beq:    branch = (A==B) ;
             bne:    branch = (A!=B);
-            blt:    branch = A < B ? 1 : 0;
-            bge:    branch = A > B ? 1 : 0;
-            bltu:   branch = ($unsigned (A) < $unsigned (B) );
-            bgeu:   branch = ($unsigned(A) > $unsigned(B));
+            blt:    branch = $signed(A) < $signed(B) ? 1 : 0;
+            bge:    branch = $signed(A) > $signed(B) ? 1 : 0;
+            bltu:   branch =  (A) < (B) ;
+            bgeu:   branch = (A) > B;
             default: branch = 0;
         endcase
     end
