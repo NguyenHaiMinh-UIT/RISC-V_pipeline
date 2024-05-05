@@ -1,0 +1,265 @@
+fc010113
+02112e23
+02812c23
+04010413
+00a00793
+fef42223
+fe042023
+00400793
+fcf42e23
+fe041723
+0280006f
+fee45783
+00179793
+ff078793
+008787b3
+fee45703
+fce79a23
+fee45783
+00178793
+fef41723
+fee45783
+fe442703
+fce7cae3
+00100793
+fef42423
+0440006f
+fc445703
+fe842783
+00179793
+ff078793
+008787b3
+fd47d783
+00f77e63
+fe842783
+00179793
+ff078793
+008787b3
+fd47d783
+fcf41223
+fe842783
+00178793
+fef42423
+fe842703
+fe442783
+faf74ce3
+fc445783
+01700593
+00078513
+038000ef
+fca42c23
+fd842703
+fdc42783
+00e7a023
+fe042783
+00100713
+00e7a023
+00000793
+00078513
+03c12083
+03812403
+04010113
+00008067
+fd010113
+02812623
+03010413
+fca42e23
+fcb42c23
+fdc42703
+fd842783
+00f707b3
+fef42623
+fec42783
+00078513
+02c12403
+03010113
+00008067
+***************************  CODE C   ************************************
+#include <stdio.h>
+#include <stdint.h>
+int Sum (int a, int b) ;
+int main() {
+  int n=10;
+  int arr[10];
+  uint32_t *done = (uint32_t*)0x00000000;
+  uint32_t *result = (uint32_t*)0x00000004;
+  int sum;
+  for (uint16_t i = 0; i < n; ++i) {
+    arr[i] = i;
+  }
+  // storing the largest number to arr[0]
+  for (int i = 1; i < n; ++i) {
+    if (arr[0] < arr[i]) {
+      arr[0] = arr[i];
+    }
+  }
+  sum = Sum(arr[0],23);
+  result[0] = sum ;
+  done[0] = 1;
+  return 0;
+}
+int Sum (int a, int b) {
+    int sum = a + b;
+    return sum;
+}
+***************************  ASSEMBLY   ************************************
+main:
+        addi    sp,sp,-64                           
+        sw      ra,60(sp)
+        sw      s0,56(sp)           
+        addi    s0,sp,64
+        li      a5,10
+        sw      a5,-28(s0)
+        sw      zero,-32(s0)
+        li      a5,4
+        sw      a5,-36(s0)
+        sh      zero,-18(s0)
+        j       .L2
+.L3:
+        lhu     a5,-18(s0)
+        slli    a5,a5,1
+        addi    a5,a5,-16
+        add     a5,a5,s0
+        lhu     a4,-18(s0)
+        sh      a4,-44(a5)
+        lhu     a5,-18(s0)
+        addi    a5,a5,1
+        sh      a5,-18(s0)
+.L2:
+        lhu     a5,-18(s0)
+        lw      a4,-28(s0)
+        bgt     a4,a5,.L3
+        li      a5,1
+        sw      a5,-24(s0)
+        j       .L4
+.L6:
+        lhu     a4,-60(s0)
+        lw      a5,-24(s0)
+        slli    a5,a5,1
+        addi    a5,a5,-16
+        add     a5,a5,s0
+        lhu     a5,-44(a5)
+        bgeu    a4,a5,.L5
+        lw      a5,-24(s0)
+        slli    a5,a5,1
+        addi    a5,a5,-16
+        add     a5,a5,s0
+        lhu     a5,-44(a5)
+        sh      a5,-60(s0)
+.L5:
+        lw      a5,-24(s0)
+        addi    a5,a5,1
+        sw      a5,-24(s0)
+.L4:
+        lw      a4,-24(s0)
+        lw      a5,-28(s0)
+        blt     a4,a5,.L6
+        lhu     a5,-60(s0)
+        li      a1,23
+        mv      a0,a5
+        call    Sum
+        sw      a0,-40(s0)
+        lw      a4,-40(s0)
+        lw      a5,-36(s0)
+        sw      a4,0(a5)
+        lw      a5,-32(s0)
+        li      a4,1
+        sw      a4,0(a5)
+        li      a5,0
+        mv      a0,a5
+        lw      ra,60(sp)
+        lw      s0,56(sp)
+        addi    sp,sp,64
+        jr      ra
+Sum:
+        addi    sp,sp,-48
+        sw      s0,44(sp)
+        addi    s0,sp,48
+        sw      a0,-36(s0)
+        sw      a1,-40(s0)
+        lw      a4,-36(s0)
+        lw      a5,-40(s0)
+        add     a5,a4,a5
+        sw      a5,-20(s0)
+        lw      a5,-20(s0)
+        mv      a0,a5
+        lw      s0,44(sp)
+        addi    sp,sp,48
+        jr      ra
+***************************  MA HEX   ************************************
+fc010113
+02112e23
+02812c23
+04010413
+00a00793
+fef42223
+fe042023
+00400793
+fcf42e23
+fe041723
+0280006f
+fee45783
+00179793
+ff078793
+008787b3
+fee45703
+fce79a23
+fee45783
+00178793
+fef41723
+fee45783
+fe442703
+fce7cae3
+00100793
+fef42423
+0440006f
+fc445703
+fe842783
+00179793
+ff078793
+008787b3
+fd47d783
+00f77e63
+fe842783
+00179793
+ff078793
+008787b3
+fd47d783
+fcf41223
+fe842783
+00178793
+fef42423
+fe842703
+fe442783
+faf74ce3
+fc445783
+01700593
+00078513
+038000ef
+fca42c23
+fd842703
+fdc42783
+00e7a023
+fe042783
+00100713
+00e7a023
+00000793
+00078513
+03c12083
+03812403
+04010113
+00008067
+fd010113
+02812623
+03010413
+fca42e23
+fcb42c23
+fdc42703
+fd842783
+00f707b3
+fef42623
+fec42783
+00078513
+02c12403
+03010113
+00008067
