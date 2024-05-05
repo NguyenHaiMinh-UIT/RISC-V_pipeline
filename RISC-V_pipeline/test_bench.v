@@ -30,7 +30,6 @@ module test_bench();
     reg [31:0] i_mem [ 0:1023] ;
     reg DataOrReg;
     reg [31:0] check_address;
-    wire [31:0] TB_check_done;
     wire [31:0] value;
     wire [31:0] ALU_RESULT;
     integer i;
@@ -45,12 +44,11 @@ module test_bench();
         .instruction(instr),
         .check_address(check_address),
         .ALU_RESULT(ALU_RESULT),
-        .value(value),
-        .Top_Check_Done(TB_check_done)
+        .value(value)
     );
 
     initial begin
-        $readmemh("hex_file.mem", i_mem);
+        $readmemh("R_type.mem", i_mem);
     end
     always #6 clk = ~clk;
     initial begin
@@ -63,24 +61,26 @@ module test_bench();
         #12;
         start = 1;
         rst_n = 1;
-    repeat (77) @(posedge clk) begin
+    repeat (80) @(posedge clk) begin
        address = i;
        instr = i_mem[i];
        i=i+1; 
     end
     start = 0;
-    
-#3500
-    DataOrReg = 0;
-    check_address = 32'd15;
-    #12;
-     $stop;
+    DataOrReg = 1;
+    check_address = 32'b0;
+// #3500
+//     DataOrReg = 0;
+//     check_address = 32'd15;
+//     #12;
+//       $stop;
     end
-//    always @(posedge clk)  begin
-//        if(TB_check_done == 1)begin
-//            DataOrReg = 1;
-//            check_address = 32'd24;
-//            $stop;
-//        end
-//    end
+   always @(posedge clk)  begin
+       if( value == 1)begin
+            check_address = 32'd1;
+        #12;
+           $stop;
+       end
+   end
+ 
 endmodule

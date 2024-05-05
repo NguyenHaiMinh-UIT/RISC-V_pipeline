@@ -12,8 +12,7 @@ module datapath (
     output  [2:0] funct3,
     output  [6:0] funct7,
     output [31:0] ALU_RESULT,
-    output [31:0] RegData, MemData,
-    output [31:0] Datapath_Check_Done
+    output [31:0] RegData, MemData
 );
     wire [31:0] PC_RESTORE, PC_NEXT, INSTR_F, INSTR_D, PC_F, PC4_F, PC_D, PC4_D;
     wire [31:0] PC_TARGET, PC_E, PC4_E, PC4_M, PC4_W;
@@ -267,7 +266,6 @@ module datapath (
         .mem_WD(Din),
         .mem_RA(mem_RA),
         .mem_RD(Dout),
-        .DMEM_Check_Done(Datapath_Check_Done),
         .MemData(MemData)
     );
     WB_register WB_register_instance(

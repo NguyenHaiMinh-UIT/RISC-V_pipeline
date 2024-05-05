@@ -11,7 +11,7 @@ module alu (
     wire [31:0] w1 = (alu_ctrl[1]) ? A - B : 0 ;        // SUB
     wire [31:0] w2 = (alu_ctrl[2]) ? A << B[4:0] : 0 ;  // SLL
     wire [31:0] w3 = (alu_ctrl[3]) ? ((A) < (B)) : 0 ;        // SLT
-    wire [31:0] w4 = (alu_ctrl[4]) ? A < B : 0 ;// SLTU
+    wire [31:0] w4 = (alu_ctrl[4]) ? A < $unsigned(B) : 0 ;// SLTU
     wire [31:0] w5 = (alu_ctrl[5]) ? A ^ B : 0 ;        // XOR
     wire [31:0] w6 = (alu_ctrl[6]) ? A >> B[4:0] : 0 ;       // SRL
     wire [31:0] w7 = (alu_ctrl[7]) ? $signed(A) >>> B[4:0] : 0 ;// SRA

@@ -7,7 +7,6 @@ module dmem #(
     input [31:0] wd,
     input we,
     output  [31:0] rd,
-    output [31:0] check_done,
     output [31:0] MemData
 
 );
@@ -19,5 +18,4 @@ module dmem #(
     end
     assign rd = dmem[wa[11:2]];
     assign MemData = dmem[ra[9:0]];
-    assign check_done = dmem[0];
 endmodule

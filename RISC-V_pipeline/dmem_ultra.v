@@ -5,7 +5,6 @@ module dmem_ultra (
     input [2:0] load,
     input [31:0] mem_WA, mem_WD,mem_RA,
     output reg [31:0] mem_RD,
-    output [31:0] DMEM_Check_Done,
     output  [31:0] MemData
 );
     // localparam SW = 3'b00;          localparam LW = 3'b000;
@@ -31,7 +30,6 @@ module dmem_ultra (
         .ra(mem_RA),
         .we(write_enable_dmem),
         .rd(mem_RD_load),
-        .check_done(DMEM_Check_Done),
         .MemData(MemData)
     );
     //LOAD

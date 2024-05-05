@@ -3,7 +3,6 @@ module pipeline (
     input start,DataOrReg,
     input [31:0] address,instruction,check_address,
     output [31:0] ALU_RESULT,
-    output [31:0] Top_Check_Done,
     output [31:0] value
 );
     wire [6:0] opcode, funct7;
@@ -59,8 +58,7 @@ module pipeline (
         .ra(Reg_RA),
         .mem_RA(Mem_RA),
         .RegData(RegData),
-        .MemData(MemData),
-        .Datapath_Check_Done(Top_Check_Done)
+        .MemData(MemData)
     );
 
     demux2to1 demux2to1_instance(
