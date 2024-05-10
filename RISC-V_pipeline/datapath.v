@@ -2,7 +2,9 @@ module datapath (
     input clk, rst_n,
     input start, alu_srcA_D, alu_srcB_D, regWrite_D, memWrite_D, 
     input  branch_D, 
-    input [1:0] STORE_SEL_D, write_back_D,jump_D,
+    input [1:0]  write_back_D,
+    input [31:0] s_data,
+    input [2:0] STORE_SEL_D,jump_D,
     input [2:0] LOAD_SEL_D, BROPCODE_D, immD,
     input [31:0] INSTRUCTION,ADDRESS,
     input [9:0] alu_ctrl_D,
@@ -12,7 +14,9 @@ module datapath (
     output  [2:0] funct3,
     output  [6:0] funct7,
     output [31:0] ALU_RESULT,
-    output [31:0] RegData, MemData
+    output [31:0] RegData, MemData,
+    output [31:0] m_data, m_addr, 
+    output m_rnw, m_sel
 );
     wire [31:0] PC_RESTORE, PC_NEXT, INSTR_F, INSTR_D, PC_F, PC4_F, PC_D, PC4_D;
     wire [31:0] PC_TARGET, PC_E, PC4_E, PC4_M, PC4_W;
@@ -26,7 +30,7 @@ module datapath (
     wire [2:0]  LOAD_SEL_E, LOAD_SEL_M, BROPCODE_E;
     wire [9:0] ALU_CTRL_E;
     wire [31:0] RD1_D, RD2_D, RD1_E, RD2_E;
-    wire [1:0] STORE_SEL_E, STORE_SEL_M;
+    wire [2:0] STORE_SEL_E, STORE_SEL_M;
     wire [1:0] forwardAE, forwardBE;
     assign FLUSH_E = flush | flush_E;
     assign opcode = INSTR_D[6:0];
@@ -257,24 +261,57 @@ module datapath (
         .store_sel_M(STORE_SEL_M),
         .load_sel_M(LOAD_SEL_M)
     );
-    dmem_ultra dmem_ultra_instance(
+    // dmem_ultra dmem_ultra_instance(
+    //     .clk(clk),
+    //     .write_enable_dmem(memWrite_M),
+    //     .store(STORE_SEL_M),
+    //     .load(LOAD_SEL_M),
+    //     .mem_WA(ALU_RSL_M),
+    //     .mem_WD(Din),
+    //     .mem_RA(mem_RA),
+    //     .mem_RD(Dout),
+    //     .MemData(MemData)
+    // );
+    wire [31:0] addr_dmem;
+    addr_decode addr_decode_instance(
+        .alu_rsl_M(ALU_RSL_M),
+        .addr_dmem(addr_dmem),
+        .addr_bus(m_addr),
+        .m_sel(m_sel)
+    );
+    
+    dmem_ultraplus dmem_ultraplus_instance(
         .clk(clk),
         .write_enable_dmem(memWrite_M),
-        .store(STORE_SEL_M),
-        .load(LOAD_SEL_M),
-        .mem_WA(ALU_RSL_M),
+        .store_sel_M(STORE_SEL_M),
+        .load_sel_M(LOAD_SEL_M),
+        .mem_WA(addr_dmem),
         .mem_WD(Din),
         .mem_RA(mem_RA),
         .mem_RD(Dout),
         .MemData(MemData)
     );
+    wire [31:0] write_back_data_M;
+    mux2to1 mux2to1_dmem_instance(
+        .A(Dout),
+        .B(s_data),
+        .sel(m_sel),
+        .S(write_back_data_M)
+    );
+
+    RW_decode RW_decode_instance(
+        .store_sel_M(STORE_SEL_M),
+        .load_sel_M(LOAD_SEL_M),
+        .m_rnw(m_rnw)
+    );
+
     WB_register WB_register_instance(
         .clk(clk),
         .rst_n(rst_n),
         .write_enable_RF_M(regWrite_M),
         .write_back_M(write_back_M),
         .alu_rsl_M(ALU_RSL_M),
-        .write_back_data_M(Dout),
+        .write_back_data_M(write_back_data_M),
         .imm_extended_M(IMM_EXTENDED_M),
         .rd_M(RD_M),
         .pc4_M(PC4_M),

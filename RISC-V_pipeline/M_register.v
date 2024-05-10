@@ -8,7 +8,7 @@ module M_register (
     input [31:0] wd_E,
     input [4:0]  rd_E,
     input [31:0] pc4_E,
-    input [1:0] store_sel_E,
+    input [2:0] store_sel_E,
     input [2:0] load_sel_E,
 
     output reg write_enable_RF_M,
@@ -19,7 +19,7 @@ module M_register (
     output reg [31:0] wd_M,
     output reg [4:0] rd_M,
     output reg [31:0] pc4_M,
-    output reg [1:0] store_sel_M,
+    output reg [2:0] store_sel_M,
     output reg [2:0] load_sel_M
 );
     always @(posedge clk) begin

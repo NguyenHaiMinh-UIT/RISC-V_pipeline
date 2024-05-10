@@ -6,4 +6,4 @@ module demux2to1 (
 );
     assign out0 = sel ? 32'b0 : in[4:0];
     assign out1 = sel ? in : 32'b0; 
-endmodule
+endmodule 

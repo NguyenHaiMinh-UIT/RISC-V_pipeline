@@ -25,30 +25,39 @@ module test_bench();
     reg clk;
     reg rst_n;
     reg start;
-    reg [31:0] instr;
+    reg [31:0] instruction;
     reg [31:0] address;
     reg [31:0] i_mem [ 0:1023] ;
     reg DataOrReg;
     reg [31:0] check_address;
     wire [31:0] value;
     wire [31:0] ALU_RESULT;
+    wire [31:0] m_addr, m_data;
+    wire m_sel, m_rnw;
+    reg [31:0] s_data;
     integer i;
-    
-    
+
     pipeline pipeline_instance(
         .clk(clk),
         .rst_n(rst_n),
         .start(start),
         .DataOrReg(DataOrReg),
         .address(address),
-        .instruction(instr),
+        .instruction(instruction),
         .check_address(check_address),
+        .s_data(s_data),
         .ALU_RESULT(ALU_RESULT),
-        .value(value)
+        .value(value),
+        .m_data(m_data),
+        .m_addr(m_addr),
+        .m_sel(m_sel),
+        .m_rnw(m_rnw)
     );
-
+    integer flush_count = 0;
+    // integer predict_true = 0;
+    integer total_branch = 0;
     initial begin
-        $readmemh("R_type.mem", i_mem);
+        $readmemh("16b_8b.mem", i_mem);
     end
     always #6 clk = ~clk;
     initial begin
@@ -63,7 +72,7 @@ module test_bench();
         rst_n = 1;
     repeat (80) @(posedge clk) begin
        address = i;
-       instr = i_mem[i];
+       instruction = i_mem[i];
        i=i+1; 
     end
     start = 0;
@@ -76,11 +85,20 @@ module test_bench();
 //       $stop;
     end
    always @(posedge clk)  begin
+        if (pipeline_instance.datapath_instance.branch_prediction_instance.flush == 1) begin
+            flush_count = flush_count + 1 ;
+        end
+        if (pipeline_instance.datapath_instance.EX_register_instance.branch_E == 1) begin
+            total_branch = total_branch + 1 ;
+        end
        if( value == 1)begin
             check_address = 32'd1;
         #12;
+        $display("flush count: %d\n", flush_count);
+        $display("total branch: %d\n", total_branch);
+        $display(" result: %d",pipeline_instance.value); 
            $stop;
        end
    end
- 
+    
 endmodule

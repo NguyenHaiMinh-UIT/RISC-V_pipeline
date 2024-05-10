@@ -19,7 +19,7 @@ module EX_register (
     input [4:0]  rs1_D,
     input [4:0]  rs2_D,
     input [4:0]  rd_D,
-    input [1:0]  store_sel_D,
+    input [2:0]  store_sel_D,
     input [2:0]  load_sel_D,
     input [2:0]  Bropcode_D,
 
@@ -40,7 +40,7 @@ module EX_register (
     output reg  [4:0] rs1_E,
     output reg  [4:0] rs2_E,
     output reg  [4:0] rd_E,
-    output reg  [1:0] store_sel_E,
+    output reg  [2:0] store_sel_E,
     output reg  [2:0] load_sel_E,
     output reg  [2:0] Bropcode_E
 
@@ -86,7 +86,7 @@ module EX_register (
             rs1_E <= 5'b0;
             rs2_E <= 5'b0;
             rd_E  <= 5'b0;  
-            store_sel_E <= 2'b0;
+            store_sel_E <= 3'b0;
             load_sel_E <= 3'b0;
             Bropcode_E <= 2'b0;           
         end

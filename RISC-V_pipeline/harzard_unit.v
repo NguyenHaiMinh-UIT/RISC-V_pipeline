@@ -23,7 +23,7 @@ module harzard_unit (
         if (write_enable_RF_M && (rd_M == rs1_E)) begin
             forwardAE <= 2'b10;
         end
-        else if (write_enable_RF_W && (rd_W == rs1_E)) begin
+        else if (write_enable_RF_W && (rd_W == rs1_E)) begin         
             forwardAE <= 2'b01;
         end
         else forwardAE <= 2'b00;

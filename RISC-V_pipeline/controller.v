@@ -9,7 +9,7 @@ module controller (
     output reg  branch_D,
     output reg  [2:0] imm_sel,
     output reg  [2:0] bropcode,
-    output reg  [1:0] store_sel_D,
+    output reg  [2:0] store_sel_D,
     output reg  [2:0] load_sel_D,
     output reg  [9:0] alu_ctrl,
     output reg  alu_scrA_D,
@@ -48,7 +48,7 @@ module controller (
             branch_D = 0;
             imm_sel = 3'b010;
             // bropcode = 3'bx;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D  = 3'b111;
             alu_scrA_D = 0;
             alu_srcB_D = 0;
@@ -66,7 +66,7 @@ module controller (
             branch_D = 0;
             // imm_sel = 3'b000;
             // bropcode = 3'bx;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D  = 3'b111;
             alu_scrA_D = 0;
             alu_srcB_D = 1;
@@ -78,7 +78,7 @@ module controller (
             jump_D = 0;
             branch_D = 1;
             imm_sel = 3'b010;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D = 3'b111;
             alu_scrA_D = 0;
             alu_srcB_D = 0;
@@ -91,12 +91,13 @@ module controller (
             branch_D = 0;
             imm_sel = 3'b001;
             load_sel_D = 3'b111;
-            case (funct3)
-               3'b000 : store_sel_D = 2'b10;
-               3'b001 : store_sel_D = 2'b01;
+            // case (funct3)
+            //    3'b000 : store_sel_D = 2'b10;
+            //    3'b001 : store_sel_D = 2'b01;
             //    3'b010 : store_sel_D = 2'b00;
-                default: store_sel_D = 2'b00;
-            endcase
+            //     default: store_sel_D = 3'b111;
+            // endcase
+            store_sel_D = funct3;
             alu_scrA_D = 0;
             alu_srcB_D = 1;
             regWrite_D = 0;
@@ -107,14 +108,16 @@ module controller (
             jump_D = 0;
             branch_D = 0;
             imm_sel = 3'b000;
-            store_sel_D = 2'b11;
-            case (funct3)
-                3'b000 : load_sel_D = 3'b010;
-                3'b001 : load_sel_D = 3'b001;
-                3'b100 : load_sel_D = 3'b100;
-                3'b101 : load_sel_D = 3'b011;
-                default: load_sel_D = 3'b000;
-            endcase
+            store_sel_D = 3'b111;
+            // case (funct3)
+            //     3'b000 : load_sel_D = 3'b010; // LB
+            //     3'b001 : load_sel_D = 3'b001; // LH
+            //     3'b100 : load_sel_D = 3'b100; // LBU
+            //     3'b101 : load_sel_D = 3'b011; // LHU
+            //     3'b010 : load_sel_D = 3'b000; // LW
+            //     default: load_sel_D = 3'b111;
+            // endcase
+            load_sel_D = funct3;
             alu_scrA_D = 0;
             alu_srcB_D = 1;
             regWrite_D = 1;
@@ -125,7 +128,7 @@ module controller (
             jump_D = 0;
             branch_D = 0;
             imm_sel = 3'b011;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D = 3'b111;
             alu_scrA_D = 1'b0;
             alu_srcB_D = 1'b0;
@@ -137,7 +140,7 @@ module controller (
             jump_D = 0;
             branch_D = 0;
             imm_sel = 3'b011;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D = 3'b111;
             alu_scrA_D = 1;
             alu_srcB_D = 1;
@@ -149,7 +152,7 @@ module controller (
             jump_D = 2'b10;
             branch_D = 0;
             imm_sel = 3'b000;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D = 3'b111;
             alu_scrA_D = 1'b0;
             alu_srcB_D = 1'b0;
@@ -161,7 +164,7 @@ module controller (
             jump_D = 2'b01;
             branch_D = 0;
             imm_sel = 3'b100;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D = 3'b111;
             alu_scrA_D = 0;
             alu_srcB_D = 0;
@@ -174,7 +177,7 @@ module controller (
             branch_D = 0;
             imm_sel = 3'bx;
             // bropcode = 3'bx;
-            store_sel_D = 2'b11;
+            store_sel_D = 3'b111;
             load_sel_D  = 3'b111;
             alu_scrA_D = 0;
             alu_srcB_D = 0;

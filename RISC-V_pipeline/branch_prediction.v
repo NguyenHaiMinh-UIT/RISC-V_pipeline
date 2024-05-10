@@ -34,15 +34,15 @@ module branch_prediction #(
         .hit(hit)
     );
     PHT #(
-        .SIZE(16)
+        .SIZE(256)
     ) PHT_instance(
         .clk(clk),
         .rst_n(rst_n),
         .branch_E(branch_E),
         .jump_E(jump_E),
         .take(branch),
-        .pc_F(pc_F[5:2]),
-        .pc_E(pc_E[5:2]),
+        .pc_F(pc_F[9:2]),
+        .pc_E(pc_E[9:2]),
         .predict(taken)
     );
     assign mux_wire = hit & taken[1];

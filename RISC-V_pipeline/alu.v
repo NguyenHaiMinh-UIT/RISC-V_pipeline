@@ -38,5 +38,4 @@ module alu (
             default: branch = 0;
         endcase
     end
-
 endmodule 
