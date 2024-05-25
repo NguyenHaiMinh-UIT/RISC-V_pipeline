@@ -31,10 +31,11 @@ module alu (
         case (Bropcode)
             beq:    branch = (A==B) ;
             bne:    branch = (A!=B);
-            blt:    branch = $signed(A) < $signed(B) ? 1 : 0;
-            bge:    branch = $signed(A) > $signed(B) ? 1 : 0;
-            bltu:   branch =  (A) < (B) ;
-            bgeu:   branch = (A) > B;
+            blt:    branch = (A) < (B) ? 1 : 0;
+            // bge:    branch = $signed(A) > $signed(B) ? 1 : 0;
+            bge:    branch = ~(A < B) ;
+            bltu:   branch =  $unsigned(A) < $unsigned(B) ;
+            bgeu:   branch = ~($unsigned(A) < $unsigned(B) );
             default: branch = 0;
         endcase
     end

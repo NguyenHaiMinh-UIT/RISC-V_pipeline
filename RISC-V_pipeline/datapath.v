@@ -2,9 +2,9 @@ module datapath (
     input clk, rst_n,
     input start, alu_srcA_D, alu_srcB_D, regWrite_D, memWrite_D, 
     input  branch_D, 
-    input [1:0]  write_back_D,
+    input [1:0]  write_back_D, jump_D,
     input [31:0] s_data,
-    input [2:0] STORE_SEL_D,jump_D,
+    input [2:0] STORE_SEL_D,
     input [2:0] LOAD_SEL_D, BROPCODE_D, immD,
     input [31:0] INSTRUCTION,ADDRESS,
     input [9:0] alu_ctrl_D,
@@ -291,9 +291,17 @@ module datapath (
         .mem_RD(Dout),
         .MemData(MemData)
     );
+    wire [31:0] aligned;
+    align align_instance(
+        .in(Dout),
+        .load_sel_M(LOAD_SEL_M),
+        .offset(addr_dmem[1:0]),
+        .out(aligned)
+    );
+
     wire [31:0] write_back_data_M;
     mux2to1 mux2to1_dmem_instance(
-        .A(Dout),
+        .A(aligned),
         .B(s_data),
         .sel(m_sel),
         .S(write_back_data_M)

@@ -26,14 +26,14 @@ module M_register (
         if (!rst_n) begin
             write_enable_RF_M <= 0;
             write_enable_dmem_M <= 0;
-            write_back_M <= 0;
-            alu_rsl_M <= 0;
-            imm_extended_M <= 0;
-            wd_M <= 0;
-            rd_M <= 0;
-            pc4_M <= 0; 
-            store_sel_M <= 0;
-            load_sel_M <= 0;
+            write_back_M <= 2'b0;
+            alu_rsl_M <= 32'b0;
+            imm_extended_M <= 32'b0;
+            wd_M <= 32'b0;
+            rd_M <= 5'b0;
+            pc4_M <= 32'b0; 
+            store_sel_M <= 3'b0;
+            load_sel_M <= 3'b0;
         end
         else 
             write_enable_RF_M <= write_enable_RF_E;
