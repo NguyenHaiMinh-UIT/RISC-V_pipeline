@@ -36,7 +36,7 @@ module datapath (
     assign funct3 = INSTR_D[14:12];
     assign funct7 = INSTR_D[31:25];
     assign jump = jump_E[1] | jump_E[0] ;
-    
+    assign m_data = Din;
     branch_prediction #(
         .SIZE(256)
     ) branch_prediction_instance(
@@ -283,7 +283,7 @@ module datapath (
         .clk(clk),
         .write_enable_dmem(memWrite_M),
         .store_sel_M(STORE_SEL_M),
-        .load_sel_M(LOAD_SEL_M),
+        // .load_sel_M(LOAD_SEL_M),
         .mem_WA(addr_dmem[10:0]),
         .mem_WD(Din),
         .mem_RA(mem_RA[8:0]),

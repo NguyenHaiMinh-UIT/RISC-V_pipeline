@@ -2,7 +2,7 @@ module dmem_ultraplus (
     input clk,
     input write_enable_dmem,
     input [2:0] store_sel_M,
-    input [2:0]  load_sel_M,
+    // input [2:0]  load_sel_M,
     input wire [10:0] mem_WA,   
     input [8:0] mem_RA,
     input [31:0] mem_WD,

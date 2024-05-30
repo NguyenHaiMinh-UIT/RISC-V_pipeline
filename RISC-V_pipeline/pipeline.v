@@ -57,7 +57,7 @@ module pipeline (
         .funct3(funct3),
         .funct7(funct7),
         .ra(Reg_RA),
-        .mem_RA(Mem_RA),
+        .mem_RA(Mem_RA[8:0]),
         .RegData(RegData),
         .MemData(MemData),
         .m_addr(m_addr),
