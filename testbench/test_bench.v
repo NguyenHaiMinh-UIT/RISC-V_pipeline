@@ -32,7 +32,6 @@ module test_bench();
     reg DataOrReg;
     reg [31:0] check_address;
     wire [31:0] value;
-    wire [31:0] ALU_RESULT;
     wire [31:0] m_addr, m_data;
     wire m_sel, m_rnw;
     reg [31:0] s_data;
@@ -47,7 +46,6 @@ module test_bench();
         .instruction(instruction),
         .check_address(check_address),
         .s_data(s_data),
-        .ALU_RESULT(ALU_RESULT),
         .value(value),
         .m_data(m_data),
         .m_addr(m_addr),
