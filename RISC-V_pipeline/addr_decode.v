@@ -4,10 +4,9 @@ module addr_decode  (
     output reg [31:0] addr_dmem,
     output reg [31:0] addr_bus,
     output reg m_sel
-); // 0x 0000_0000 0000_0000 0000_0100 0000_0000
-    // 0x00000400
+); 
     always @(*) begin
-        if (alu_rsl_M < 32'h4FF ) begin
+        if (alu_rsl_M < 32'd512) begin
             m_sel = 0;
             addr_dmem = alu_rsl_M;
             addr_bus = 32'bz;

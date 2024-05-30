@@ -1,13 +1,13 @@
 module branch_prediction #(
-    parameter SIZE = 1024
+    parameter SIZE = 256
 ) (
     input clk, rst_n,
     input jump_E,
     input branch_E,
     input taken_E,
     input branch, // = T
-    input [31:0] pc_F,
-    input [31:0] pc_E,
+    input [25:2] pc_F,
+    input [25:2] pc_E,
     input [31:0] pc_D,
     input [31:0] pc_target,
     input [31:0] pc4,
@@ -20,15 +20,13 @@ module branch_prediction #(
     wire hit,mux_wire;
     wire [1:0] taken;
     wire [31:0] target_addr;
-    BTB #(
-        .SIZE(SIZE)
-    ) BTB_instance(
+    BTB  BTB_instance(
         .clk(clk),
         .rst_n(rst_n),
         .jump_E(jump_E),
         .branch_E(branch_E),
-        .pc_F(pc_F[21:2]),
-        .pc_E(pc_E[21:2]),
+        .pc_F(pc_F[25:2]),
+        .pc_E(pc_E[25:2]),
         .pc_target(pc_target),
         .pc_out(target_addr),
         .hit(hit)

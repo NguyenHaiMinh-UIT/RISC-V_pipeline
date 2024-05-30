@@ -9,11 +9,10 @@ module datapath (
     input [31:0] INSTRUCTION,ADDRESS,
     input [9:0] alu_ctrl_D,
     input [4:0] ra,
-    input [31:0] mem_RA,
+    input [8:0] mem_RA,
     output  [6:0] opcode,
     output  [2:0] funct3,
     output  [6:0] funct7,
-    output [31:0] ALU_RESULT,
     output [31:0] RegData, MemData,
     output [31:0] m_data, m_addr, 
     output m_rnw, m_sel
@@ -37,9 +36,9 @@ module datapath (
     assign funct3 = INSTR_D[14:12];
     assign funct7 = INSTR_D[31:25];
     assign jump = jump_E[1] | jump_E[0] ;
-    assign ALU_RESULT = ALU_RSL_E;
+    
     branch_prediction #(
-        .SIZE(1024)
+        .SIZE(256)
     ) branch_prediction_instance(
         .clk(clk),
         .rst_n(rst_n),
@@ -47,8 +46,8 @@ module datapath (
         .branch_E(branch_E),
         .taken_E(taken_E),
         .branch(branch),
-        .pc_F(PC_F),
-        .pc_E(PC_E),
+        .pc_F(PC_F[25:2]),
+        .pc_E(PC_E[25:2]),
         .pc_D(PC_D),
         .pc_target(PC_TARGET),
         .pc4(PC4_F),
@@ -285,9 +284,9 @@ module datapath (
         .write_enable_dmem(memWrite_M),
         .store_sel_M(STORE_SEL_M),
         .load_sel_M(LOAD_SEL_M),
-        .mem_WA(addr_dmem),
+        .mem_WA(addr_dmem[10:0]),
         .mem_WD(Din),
-        .mem_RA(mem_RA),
+        .mem_RA(mem_RA[8:0]),
         .mem_RD(Dout),
         .MemData(MemData)
     );

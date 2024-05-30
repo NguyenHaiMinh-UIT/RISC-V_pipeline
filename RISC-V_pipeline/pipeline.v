@@ -3,7 +3,6 @@ module pipeline (
     input start,DataOrReg,
     input [31:0] address,instruction,check_address,
     input [31:0] s_data,
-    output [31:0] ALU_RESULT,
     output [31:0] value,
     output [31:0] m_data, m_addr,
     output m_sel,m_rnw
@@ -57,7 +56,6 @@ module pipeline (
         .opcode(opcode),
         .funct3(funct3),
         .funct7(funct7),
-        .ALU_RESULT(ALU_RESULT),
         .ra(Reg_RA),
         .mem_RA(Mem_RA),
         .RegData(RegData),

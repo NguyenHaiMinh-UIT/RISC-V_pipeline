@@ -3,32 +3,24 @@ module dmem_ultraplus (
     input write_enable_dmem,
     input [2:0] store_sel_M,
     input [2:0]  load_sel_M,
-    input wire [31:0] mem_WA,  mem_WD, mem_RA,
+    input wire [10:0] mem_WA,   
+    input [8:0] mem_RA,
+    input [31:0] mem_WD,
     output [31:0] mem_RD,
     output [31:0] MemData
 );
 wire [1:0] offset;
-reg [31:0] dmem [0:1023]  ;
+reg [31:0] dmem [0:511]  ;
 // reg [7:0] mem8_0, mem8_1, mem8_2, mem8_3;
 // reg [15:0] mem16_0, mem16_2;
-wire [9:0] addr;
-assign addr = mem_WA[11:2];
+wire [8:0] addr;
+assign addr = mem_WA[10:2];
 assign offset = mem_WA[1:0];
 //------------------------------------------------------------------------//
 // reg [7:0] mem8_0 [0:1023] ;
 // reg [7:0] mem8_1 [0:1023] ;
 // reg [7:0] mem8_2 [0:1023] ;
 // reg [7:0] mem8_3 [0:1023] ;
-integer i;
-initial begin
-    for (i=0;i<1024;i=i+1) begin
-        // mem8_0[i] <= 32'b0;
-        // mem8_1[i] <= 32'b0;
-        // mem8_2[i] <= 32'b0;
-        // mem8_3[i] <= 32'b0;
-        dmem[i] <= 32'b0;
-    end
-end
 // always @(posedge clk) begin
 //     if (write_enable_dmem) begin
 //         case (store_sel_M)
@@ -153,20 +145,20 @@ end
                 end
                 3'b001: begin
                     if (offset == 2'b00) begin
-                        dmem[addr] [15:0] = mem_WD[15:0];
+                        dmem[addr] [15:0] <= mem_WD[15:0];
                     end 
                     else begin
-                        dmem[addr] [31:16] = mem_WD[15:0];
+                        dmem[addr] [31:16] <= mem_WD[15:0];
                     end
                 end
                 3'b010: begin
-                    dmem[addr] = mem_WD;
+                    dmem[addr] <= mem_WD;
                 end
-                default: dmem[addr] = 32'bx ;
+                default: dmem[addr] <= 32'bx ;
             endcase
         end
     end
-    assign MemData = dmem[mem_RA[9:0]];
+    assign MemData = dmem[mem_RA[8:0]];
     assign mem_RD = dmem[addr];
     // assign dout = dmem[addr];
     // always @(*) begin
