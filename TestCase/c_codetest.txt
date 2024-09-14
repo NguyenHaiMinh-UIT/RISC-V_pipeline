@@ -186,80 +186,103 @@ Sum:
         lw      s0,44(sp)
         addi    sp,sp,48
         jr      ra
-***************************  MA HEX   ************************************
-fc010113
-02112e23
-02812c23
-04010413
-00a00793
-fef42223
-fe042023
-00400793
-fcf42e23
-fe041723
-0280006f
-fee45783
-00179793
-ff078793
-008787b3
-fee45703
-fce79a23
-fee45783
-00178793
-fef41723
-fee45783
-fe442703
-fce7cae3
-00100793
-fef42423
-0440006f
-fc445703
-fe842783
-00179793
-ff078793
-008787b3
-fd47d783
-00f77e63
-fe842783
-00179793
-ff078793
-008787b3
-fd47d783
-fcf41223
-fe842783
-00178793
-fef42423
-fe842703
-fe442783
-faf74ce3
-fc445783
-01700593
-00078513
-038000ef
-fca42c23
-fd842703
-fdc42783
-00e7a023
-fe042783
-00100713
-00e7a023
-00000793
-00078513
-03c12083
-03812403
-04010113
-00008067
-fd010113
-02812623
-03010413
-fca42e23
-fcb42c23
-fdc42703
-fd842783
-00f707b3
-fef42623
-fec42783
-00078513
-02c12403
-03010113
-00008067
+-------------------------------------------------------------------------------------------------
+#include <stdio.h>
+#include <stdint.h>
+int main() {
+    // Write C code here
+    uint32_t *result = (uint32_t*) 0x00000004;
+    uint32_t *done = (uint32_t*) 0x00000000;
+    int count = 0;
+    // Bốn vòng lặp for lồng vào nhau
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            for (int k = 0; k < 10; k++) {
+                for (int l = 0; l < 10; l++) {
+                    if (i == j && j == k && k == l) {
+                        count++;  // Tăng count nếu tất cả các chỉ số bằng nhau
+                    }
+                }
+            }
+        }
+    }
+    result[0] = count; // 10
+    done[0] = 1;
+    return 0;
+}
+***************************  ASSEMBLY   ************************************
+main:
+        addi    sp,sp,-48
+        sw      ra,44(sp)
+        sw      s0,40(sp)
+        addi    s0,sp,48
+        li      a5,4
+        sw      a5,-40(s0)
+        sw      zero,-44(s0)
+        sw      zero,-20(s0)
+        sw      zero,-24(s0)
+        j       .L2
+.L10:
+        sw      zero,-28(s0)
+        j       .L3
+.L9:
+        sw      zero,-32(s0)
+        j       .L4
+.L8:
+        sw      zero,-36(s0)
+        j       .L5
+.L7:
+        lw      a4,-24(s0)
+        lw      a5,-28(s0)
+        bne     a4,a5,.L6
+        lw      a4,-28(s0)
+        lw      a5,-32(s0)
+        bne     a4,a5,.L6
+        lw      a4,-32(s0)
+        lw      a5,-36(s0)
+        bne     a4,a5,.L6
+        lw      a5,-20(s0)
+        addi    a5,a5,1
+        sw      a5,-20(s0)
+.L6:
+        lw      a5,-36(s0)
+        addi    a5,a5,1
+        sw      a5,-36(s0)
+.L5:
+        lw      a4,-36(s0)
+        li      a5,9
+        ble     a4,a5,.L7
+        lw      a5,-32(s0)
+        addi    a5,a5,1
+        sw      a5,-32(s0)
+.L4:
+        lw      a4,-32(s0)
+        li      a5,9
+        ble     a4,a5,.L8
+        lw      a5,-28(s0)
+        addi    a5,a5,1
+        sw      a5,-28(s0)
+.L3:
+        lw      a4,-28(s0)
+        li      a5,9
+        ble     a4,a5,.L9
+        lw      a5,-24(s0)
+        addi    a5,a5,1
+        sw      a5,-24(s0)
+.L2:
+        lw      a4,-24(s0)
+        li      a5,9
+        ble     a4,a5,.L10
+        lw      a4,-20(s0)
+        lw      a5,-40(s0)
+        sw      a4,0(a5)
+        lw      a5,-44(s0)
+        li      a4,1
+        sw      a4,0(a5)
+        li      a5,0
+        mv      a0,a5
+        lw      ra,44(sp)
+        lw      s0,40(sp)
+        addi    sp,sp,48
+        jr      ra
+-----------------------------------------------------------------------------------
